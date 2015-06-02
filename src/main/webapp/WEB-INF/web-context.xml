@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/jdbc
+        http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+       <context:component-scan base-package="com.erestaurant" />
+
+       <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+              <property name="prefix" value="/WEB-INF/views/"/>
+              <property name="suffix" value=".jsp"/>
+       </bean>
+
+       <bean id="applicationProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+              <property name="location" value="classpath:database.properties"/>
+       </bean>
+
+       <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+              <property name="driverClassName" value="${db.driver}" />
+              <property name="url" value="${db.url}" />
+              <property name="username" value="${db.user}" />
+              <property name="password" value="${db.pass}" />
+       </bean>
+
+
+
+       <!--jdbc:initialize-database data-source="dataSource">
+              <jdbc:script location="/WEB-INF/restaurantdb_create.sql" encoding="UTF-8" />
+       </jdbc:initialize-database-->
+
+       <bean id="menuRepository" class="com.erestaurant.repositories.MenuRepositoryImpl">
+           <constructor-arg ref="dataSource"/>
+       </bean>
+
+       <bean id="userRepository" class="com.erestaurant.repositories.UserRepositoryImpl">
+              <constructor-arg ref="dataSource"/>
+       </bean>
+
+       <mvc:annotation-driven >
+              <mvc:message-converters>
+                     <ref bean="formHttpMessageConverter"/>
+              </mvc:message-converters>
+       </mvc:annotation-driven>
+
+       <bean id="formHttpMessageConverter" class="org.springframework.http.converter.FormHttpMessageConverter"/>
+
+       <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+              <property name="messageConverters">
+                     <list>
+                            <ref bean="formHttpMessageConverter"/>
+                     </list>
+              </property>
+       </bean>
+
+       <mvc:default-servlet-handler />
+
+</beans>
