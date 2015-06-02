@@ -25,5 +25,8 @@
         <module name="eRestaurant" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="eRestaurant" target="1.6" />
+    </bytecodeTargetLevel>
   </component>
 </project>
